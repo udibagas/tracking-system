@@ -91,7 +91,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-    const pathname = '/'
+    const pathname = window.location.pathname
     const { user } = usePage().props.auth;
 
     return (
