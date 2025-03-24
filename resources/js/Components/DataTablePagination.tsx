@@ -1,5 +1,5 @@
 import { Table } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Select,
@@ -50,7 +50,15 @@ export function DataTablePagination<TData>({
                     </SelectContent>
                 </Select>
                 <Button
-                    variant="outline"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => table.firstPage()}
+                    disabled={!table.getCanPreviousPage()}
+                >
+                    <ChevronsLeft />
+                </Button>
+                <Button
+                    variant="secondary"
                     size="sm"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
@@ -58,12 +66,20 @@ export function DataTablePagination<TData>({
                     <ChevronLeft />
                 </Button>
                 <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >
                     <ChevronRight />
+                </Button>
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => table.lastPage()}
+                    disabled={!table.getCanNextPage()}
+                >
+                    <ChevronsRight />
                 </Button>
             </div>
         </div>

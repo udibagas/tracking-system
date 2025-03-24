@@ -7,6 +7,7 @@ import { DataTablePagination } from "./DataTablePagination";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import fetchData from "@/lib/fetchData";
 import { useMemo, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
     url: string
@@ -25,10 +26,21 @@ export function DataTable<TData, TValue>({
     })
 
     const [sorting, setSorting] = useState<SortingState>([])
+    const [search, setSearch] = useState<string | null>(null)
+
+    const params = useMemo(() => {
+        return {
+            pageSize: pagination.pageSize,
+            page: pagination.pageIndex + 1,
+            sort: sorting?.[0]?.id,
+            order: sorting?.[0]?.desc ? "desc" : "asc",
+            search
+        }
+    }, [pagination, sorting, search])
 
     const dataQuery = useQuery({
-        queryKey: [url, pagination, sorting],
-        queryFn: () => fetchData<TData>(url, { ...pagination, sort: sorting }),
+        queryKey: [url, params],
+        queryFn: () => fetchData<TData>(url, params),
         placeholderData: keepPreviousData
     })
 
@@ -46,6 +58,14 @@ export function DataTable<TData, TValue>({
         manualPagination: true,
     })
 
+    function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+        const timeout = setTimeout(() => {
+            setSearch(e.target.value)
+        }, 1000)
+
+        return () => clearTimeout(timeout)
+    }
+
     return (
         <>
             <div className="flex items-center justify-between mb-4">
@@ -53,6 +73,7 @@ export function DataTable<TData, TValue>({
                 <div className="flex items-center space-x-2">
                     <Button className="" size='sm'>Create User</Button>
                     <DataTableViewOptions table={table} />
+                    <Input placeholder="Search..." className="h-8" onChange={handleSearch} />
                 </div>
             </div>
 

@@ -37,14 +37,7 @@ export default async function fetchData<TData>(
 ) {
     const { data } = await axiosInstance.get<DataTableServerResponse<TData>>(
         url,
-        {
-            params: {
-                pageSize: params.pageSize,
-                page: params.pageIndex + 1,
-                sort: params.sort?.[0]?.id,
-                order: params.sort?.[0]?.desc ? "desc" : "asc",
-            },
-        }
+        { params }
     );
 
     return data;
