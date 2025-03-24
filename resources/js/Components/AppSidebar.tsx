@@ -23,8 +23,8 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "../Components/ui/sidebar";
-import { NavUser } from "./NavUser";
+} from "./ui/sidebar";
+import { NavUser } from "@/components/NavUser";
 import { Link, usePage } from "@inertiajs/react";
 
 const items = [

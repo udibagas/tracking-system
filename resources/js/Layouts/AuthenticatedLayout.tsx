@@ -1,6 +1,6 @@
-import { AppSidebar } from '@/Components/AppSidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import { Separator } from '@/components/ui/separator';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/Components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { PropsWithChildren, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 

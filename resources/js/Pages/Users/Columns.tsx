@@ -1,6 +1,6 @@
-import { DataTableColumnHeader } from '@/Components/DataTableColumnHeader';
+import { DataTableColumnHeader } from '@/components/DataTableColumnHeader';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/Components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table'
 import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from 'lucide-react';
 

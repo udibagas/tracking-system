@@ -7,7 +7,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Components/ui/select";
+} from "@/components/ui/select";
 import { DataTableServerResponse } from "@/lib/fetchData";
 
 interface DataTablePaginationProps<TData> {
@@ -36,7 +36,7 @@ export function DataTablePagination<TData>({
                         table.setPageSize(Number(value));
                     }}
                 >
-                    <SelectTrigger className="h-8 w-[110px]">
+                    <SelectTrigger className="h-6 w-[110px] text-sm">
                         <SelectValue
                             placeholder={table.getState().pagination.pageSize}
                         />
@@ -51,7 +51,7 @@ export function DataTablePagination<TData>({
                 </Select>
                 <Button
                     variant="secondary"
-                    size="sm"
+                    size="xs"
                     onClick={() => table.firstPage()}
                     disabled={!table.getCanPreviousPage()}
                 >
@@ -59,7 +59,7 @@ export function DataTablePagination<TData>({
                 </Button>
                 <Button
                     variant="secondary"
-                    size="sm"
+                    size="xs"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
                 >
@@ -67,7 +67,7 @@ export function DataTablePagination<TData>({
                 </Button>
                 <Button
                     variant="secondary"
-                    size="sm"
+                    size="xs"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >
@@ -75,7 +75,7 @@ export function DataTablePagination<TData>({
                 </Button>
                 <Button
                     variant="secondary"
-                    size="sm"
+                    size="xs"
                     onClick={() => table.lastPage()}
                     disabled={!table.getCanNextPage()}
                 >
