@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axiosInstance } from "./api";
 
 interface PaginationLink {
     url: string | null;
@@ -21,15 +21,6 @@ export interface DataTableServerResponse<TData> {
     to: number;
     total: number;
 }
-
-const axiosInstance = axios.create({
-    baseURL: "http://localhost:8000",
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-    },
-});
 
 export default async function fetchData<TData>(
     url: string,

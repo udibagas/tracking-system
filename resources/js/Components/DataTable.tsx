@@ -8,6 +8,10 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import fetchData from "@/lib/fetchData";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { AlertDialog, AlertDialogTitle, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger } from "./ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from "lucide-react";
+import { remove } from "@/lib/api";
 
 interface DataTableProps<TData, TValue> {
     url: string
@@ -15,11 +19,7 @@ interface DataTableProps<TData, TValue> {
     title: string
 }
 
-export function DataTable<TData, TValue>({
-    url,
-    columns,
-    title
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { id: number }, TValue>({ url, columns, title }: DataTableProps<TData, TValue>) {
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -61,10 +61,19 @@ export function DataTable<TData, TValue>({
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         const timeout = setTimeout(() => {
             setSearch(e.target.value)
-        }, 1000)
+        }, 500)
 
         return () => clearTimeout(timeout)
     }
+
+    function handleDelete(id: number | string) {
+        remove(`${url}/${id}`)
+            .then(() => {
+                dataQuery.refetch()
+            })
+            .catch(() => alert('Failed to delete user'))
+    }
+
 
     return (
         <>
@@ -94,6 +103,13 @@ export function DataTable<TData, TValue>({
                                         </TableHead>
                                     )
                                 })}
+                                {/* Action column */}
+                                <TableHead style={{ width: 40 }} className="text-center">
+                                    <Button variant="ghost" size='sm' onClick={() => table.firstPage()}>
+                                        <RefreshCcw />
+                                        <span className="sr-only">Refresh</span>
+                                    </Button>
+                                </TableHead>
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -109,6 +125,24 @@ export function DataTable<TData, TValue>({
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
+                                    <TableCell className="text-center">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0" size='sm'>
+                                                    <span className="sr-only">Open menu</span>
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem onClick={() => alert(`Edit user: ${row.original.id}`)} >
+                                                    <Edit /> Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(row.original.id)} >
+                                                    <Trash2 /> Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (
@@ -124,5 +158,28 @@ export function DataTable<TData, TValue>({
 
             <DataTablePagination table={table} data={dataQuery.data} />
         </>
+    )
+}
+
+export function DeleteConfirmation() {
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button variant="outline">Delete</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the data.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }
