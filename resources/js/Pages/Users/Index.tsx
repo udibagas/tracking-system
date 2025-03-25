@@ -7,7 +7,7 @@ export default function Users() {
     return (
         <AuthenticatedLayout>
             <Head title="Users" />
-            <DataTable title="Manage Users" columns={columns} url="/users" />
+            <DataTable title="Manage Users" columns={columns} url="/users" showIndexColumn showActionColumn />
         </AuthenticatedLayout>
     );
 }

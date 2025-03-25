@@ -1,6 +1,19 @@
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ColumnDef, flexRender, getCoreRowModel, PaginationState, SortingState, useReactTable } from "@tanstack/react-table";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    PaginationState,
+    SortingState,
+    useReactTable,
+} from "@tanstack/react-table";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "./DataTablePagination";
@@ -8,25 +21,48 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import fetchData from "@/lib/fetchData";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { AlertDialog, AlertDialogTitle, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger } from "./ui/alert-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogTitle,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from "lucide-react";
 import { remove } from "@/lib/api";
 
 interface DataTableProps<TData, TValue> {
-    url: string
-    columns: ColumnDef<TData, TValue>[]
-    title: string
+    url: string;
+    columns: ColumnDef<TData, TValue>[];
+    title: string;
+    showIndexColumn?: boolean;
+    showActionColumn?: boolean;
 }
 
-export function DataTable<TData extends { id: number }, TValue>({ url, columns, title }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { id: number }, TValue>({
+    url,
+    columns,
+    title,
+    showIndexColumn,
+    showActionColumn,
+}: DataTableProps<TData, TValue>) {
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
-    })
+    });
 
-    const [sorting, setSorting] = useState<SortingState>([])
-    const [search, setSearch] = useState<string | null>(null)
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [search, setSearch] = useState<string | null>(null);
 
     const params = useMemo(() => {
         return {
@@ -34,17 +70,17 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
             page: pagination.pageIndex + 1,
             sort: sorting?.[0]?.id,
             order: sorting?.[0]?.desc ? "desc" : "asc",
-            search
-        }
-    }, [pagination, sorting, search])
+            search,
+        };
+    }, [pagination, sorting, search]);
 
     const dataQuery = useQuery({
         queryKey: [url, params],
         queryFn: () => fetchData<TData>(url, params),
-        placeholderData: keepPreviousData
-    })
+        placeholderData: keepPreviousData,
+    });
 
-    const defaultData = useMemo(() => [], [])
+    const defaultData = useMemo(() => [], []);
 
     const table = useReactTable({
         columns,
@@ -56,14 +92,14 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         manualPagination: true,
-    })
+    });
 
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         const timeout = setTimeout(() => {
-            setSearch(e.target.value)
-        }, 500)
+            setSearch(e.target.value);
+        }, 500);
 
-        return () => clearTimeout(timeout)
+        return () => clearTimeout(timeout);
     }
 
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -90,9 +126,15 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-semibold">{title}</h1>
                 <div className="flex items-center space-x-2">
-                    <Button className="" size='sm'>Create User</Button>
+                    <Button className="" size="sm">
+                        Create User
+                    </Button>
                     <DataTableViewOptions table={table} />
-                    <Input placeholder="Search..." className="h-8" onChange={handleSearch} />
+                    <Input
+                        placeholder="Search..."
+                        className="h-8"
+                        onChange={handleSearch}
+                    />
                 </div>
             </div>
 
@@ -101,28 +143,40 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                <TableHead className="w-8">
-                                    No.
-                                </TableHead>
+                                {showIndexColumn && (
+                                    <TableHead className="w-8">No.</TableHead>
+                                )}
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} style={{ width: header.column.getSize() }}>
+                                        <TableHead
+                                            key={header.id}
+                                            style={{
+                                                width: header.column.getSize(),
+                                            }}
+                                        >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column.columnDef.header,
+                                                    header.column.columnDef
+                                                        .header,
                                                     header.getContext()
                                                 )}
                                         </TableHead>
-                                    )
+                                    );
                                 })}
-                                {/* Action column */}
-                                <TableHead style={{ width: 40 }} className="text-center">
-                                    <Button variant="ghost" size='sm' onClick={() => table.firstPage()}>
+                                {showActionColumn && <TableHead
+                                    style={{ width: 40 }}
+                                    className="text-center"
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => table.firstPage()}
+                                    >
                                         <RefreshCcw />
                                         <span className="sr-only">Refresh</span>
                                     </Button>
-                                </TableHead>
+                                </TableHead>}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -131,39 +185,68 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
+                                    data-state={
+                                        row.getIsSelected() && "selected"
+                                    }
                                 >
-                                    <TableCell>
-                                        {(dataQuery.data?.from ?? 1) + row.index}.
-                                    </TableCell>
+                                    {showIndexColumn && <TableCell>
+                                        {(dataQuery.data?.from ?? 1) +
+                                            row.index}
+                                        .
+                                    </TableCell>}
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
                                         </TableCell>
                                     ))}
-                                    <TableCell className="text-center">
+
+                                    {showActionColumn && <TableCell className="text-center">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0" size='sm'>
-                                                    <span className="sr-only">Open menu</span>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="h-8 w-8 p-0"
+                                                    size="sm"
+                                                >
+                                                    <span className="sr-only">
+                                                        Open menu
+                                                    </span>
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => alert(`Edit user: ${row.original.id}`)} >
+                                                <DropdownMenuItem
+                                                    onClick={() =>
+                                                        alert(
+                                                            `Edit user: ${row.original.id}`
+                                                        )
+                                                    }
+                                                >
                                                     <Edit /> Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(row.original.id)} >
+                                                <DropdownMenuItem
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            row.original.id
+                                                        )
+                                                    }
+                                                >
                                                     <Trash2 /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                    </TableCell>
+                                    </TableCell>}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
                                     No results.
                                 </TableCell>
                             </TableRow>
@@ -180,7 +263,7 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
                 onCancel={() => setDeleteDialogVisible(false)}
             />
         </>
-    )
+    );
 }
 
 interface DeleteConfirmationProps {
@@ -189,20 +272,30 @@ interface DeleteConfirmationProps {
     onCancel: () => void;
 }
 
-export function DeleteConfirmation({ visible, onConfirm, onCancel }: DeleteConfirmationProps) {
+export function DeleteConfirmation({
+    visible,
+    onConfirm,
+    onCancel,
+}: DeleteConfirmationProps) {
     return (
         <AlertDialog open={visible} onOpenChange={onCancel}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                        Are you absolutely sure?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone.
-                        This will permanently delete the data.
+                        This action cannot be undone. This will permanently
+                        delete the data.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
+                    <AlertDialogCancel onClick={onCancel}>
+                        Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction onClick={onConfirm}>
+                        Continue
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
