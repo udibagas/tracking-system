@@ -66,14 +66,24 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
         return () => clearTimeout(timeout)
     }
 
-    function handleDelete(id: number | string) {
-        remove(`${url}/${id}`)
-            .then(() => {
-                dataQuery.refetch()
-            })
-            .catch(() => alert('Failed to delete user'))
+    const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    function handleDelete(id: number) {
+        setSelectedId(id);
+        setDeleteDialogVisible(true);
     }
 
+    function confirmDelete() {
+        if (selectedId !== null) {
+            remove(`${url}/${selectedId}`)
+                .then(() => {
+                    setDeleteDialogVisible(false);
+                    dataQuery.refetch();
+                })
+                .catch(() => alert("Failed to delete user"));
+        }
+    }
 
     return (
         <>
@@ -91,6 +101,9 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
+                                <TableHead className="w-8">
+                                    No.
+                                </TableHead>
                                 {headerGroup.headers.map((header) => {
                                     return (
                                         <TableHead key={header.id} style={{ width: header.column.getSize() }}>
@@ -120,6 +133,9 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
+                                    <TableCell>
+                                        {(dataQuery.data?.from ?? 1) + row.index}.
+                                    </TableCell>
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -157,29 +173,38 @@ export function DataTable<TData extends { id: number }, TValue>({ url, columns, 
             </div>
 
             <DataTablePagination table={table} data={dataQuery.data} />
+
+            <DeleteConfirmation
+                visible={deleteDialogVisible}
+                onConfirm={confirmDelete}
+                onCancel={() => setDeleteDialogVisible(false)}
+            />
         </>
     )
 }
 
-export function DeleteConfirmation() {
-    return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <Button variant="outline">Delete</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
+interface DeleteConfirmationProps {
+    visible: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+}
 
+export function DeleteConfirmation({ visible, onConfirm, onCancel }: DeleteConfirmationProps) {
+    return (
+        <AlertDialog open={visible} onOpenChange={onCancel}>
+            <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the data.
+                        This action cannot be undone.
+                        This will permanently delete the data.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Continue</AlertDialogAction>
+                    <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
+    );
 }

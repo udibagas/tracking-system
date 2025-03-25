@@ -13,15 +13,15 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $sort = $request->sort ?? 'name';
-        $order = $request->order ?? 'asc';
-
-        $users = User::when($request->search, function ($query, $search) {
-            $query->where('name', 'ILIKE', '%' . $search . '%')
-                ->orWhere('email', 'ILIKE', '%' . $search . '%');
-        })->orderBy($sort, $order)->paginate($request->pageSize ?? 10);
-
         if ($request->wantsJson()) {
+            $sort = $request->sort ?? 'name';
+            $order = $request->order ?? 'asc';
+
+            $users = User::when($request->search, function ($query, $search) {
+                $query->where('name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('email', 'ILIKE', '%' . $search . '%');
+            })->orderBy($sort, $order)->paginate($request->pageSize ?? 10);
+
             return $users;
         }
 

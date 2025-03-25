@@ -10,14 +10,6 @@ export type UserType = {
 
 export const columns: ColumnDef<UserType>[] = [
     {
-        header: 'No.',
-        accessorFn: (row, index) => {
-            console.log(row)
-            return index + 1
-        },
-        size: 40,
-    },
-    {
         accessorKey: 'name',
         header: ({ column }) => <DataTableColumnHeader column={column} title='Name' />,
     },
