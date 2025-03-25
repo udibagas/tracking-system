@@ -47,6 +47,9 @@ interface DataTableProps<TData, TValue> {
     title: string;
     showIndexColumn?: boolean;
     showActionColumn?: boolean;
+    showToggleColumn?: boolean;
+    showSearch?: boolean;
+    controls?: React.ReactNode;
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
@@ -55,6 +58,9 @@ export function DataTable<TData extends { id: number }, TValue>({
     title,
     showIndexColumn,
     showActionColumn,
+    showToggleColumn,
+    showSearch,
+    controls,
 }: DataTableProps<TData, TValue>) {
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -126,15 +132,15 @@ export function DataTable<TData extends { id: number }, TValue>({
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-semibold">{title}</h1>
                 <div className="flex items-center space-x-2">
-                    <Button className="" size="sm">
-                        Create User
-                    </Button>
-                    <DataTableViewOptions table={table} />
-                    <Input
+                    {controls}
+
+                    {showToggleColumn && <DataTableViewOptions table={table} />}
+
+                    {showSearch && <Input
                         placeholder="Search..."
                         className="h-8"
                         onChange={handleSearch}
-                    />
+                    />}
                 </div>
             </div>
 
