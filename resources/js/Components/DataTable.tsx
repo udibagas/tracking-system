@@ -103,6 +103,12 @@ export function DataTable<TData extends { id: number }, TValue>({
         manualPagination: true,
     });
 
+    function refreshData() {
+        setSearch('')
+        document.querySelector<HTMLInputElement>('#search')!.value = ''
+        table.setPageIndex(0)
+    }
+
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         const timeout = setTimeout(() => {
             table.setPageIndex(0);
@@ -148,6 +154,7 @@ export function DataTable<TData extends { id: number }, TValue>({
                     {showToggleColumn && <DataTableViewOptions table={table} />}
 
                     {showSearch && <Input
+                        id="search"
                         placeholder="Search..."
                         className="h-8"
                         onChange={handleSearch}
@@ -188,7 +195,7 @@ export function DataTable<TData extends { id: number }, TValue>({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => table.firstPage()}
+                                        onClick={() => refreshData()}
                                     >
                                         <RefreshCcw />
                                         <span className="sr-only">Refresh</span>
