@@ -19,6 +19,7 @@ import { create, update } from "@/lib/api";
 import { AxiosError } from "axios";
 import { ServerErrorResponse } from "@/types";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserFormDialogProps {
     visible: boolean;
@@ -40,6 +41,8 @@ const formSchema = z.object({
 })
 
 export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDialogProps) {
+    const queryClient = useQueryClient();
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -65,10 +68,16 @@ export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDi
                 : await create('/users', values);
 
             toast.success('User saved successfully', {
-                position: 'top-center'
+                richColors: true,
             });
             form.reset();
             closeDialog();
+
+            // reload table
+            queryClient.invalidateQueries({
+                queryKey: ['/users'],
+            });
+
         } catch (error) {
             const axiosError = error as ServerErrorResponse
             if (axiosError.code === 'ERR_BAD_REQUEST') {
@@ -81,8 +90,8 @@ export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDi
                 }
             }
 
-            toast.error(`Failed to save user. ${axiosError.response.data.message}`, {
-                position: 'top-center'
+            toast.error(axiosError.response.data.message, {
+                richColors: true,
             });
         }
     }
