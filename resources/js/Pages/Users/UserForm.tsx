@@ -16,7 +16,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react";
 import { create, update } from "@/lib/api";
-import { AxiosError } from "axios";
 import { ServerErrorResponse } from "@/types";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -116,15 +115,15 @@ export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDi
                         <FormField
                             control={form.control}
                             name="name"
-                            render={({ field, fieldState }) => {
-                                return <FormItem>
+                            render={({ field, fieldState }) => (
+                                <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input hasError={fieldState.invalid} placeholder="Your Name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            }}
+                            )}
                         />
 
                         <FormField
