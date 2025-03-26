@@ -70,6 +70,7 @@ export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDi
             toast.success('User saved successfully', {
                 richColors: true,
             });
+
             form.reset();
             closeDialog();
 

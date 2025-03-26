@@ -105,6 +105,7 @@ export function DataTable<TData extends { id: number }, TValue>({
 
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         const timeout = setTimeout(() => {
+            table.setPageIndex(0);
             setSearch(e.target.value);
         }, 500);
 
