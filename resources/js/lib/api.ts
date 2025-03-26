@@ -9,18 +9,18 @@ export const axiosInstance = axios.create({
     },
 });
 
-export function get(url: string) {
-    return axiosInstance.get(url);
+export function create(url: string, data: any) {
+    return axiosInstance.post(url, data);
 }
 
-export function remove(url: string) {
-    return axiosInstance.delete(url);
+export function get(url: string) {
+    return axiosInstance.get(url);
 }
 
 export function update(url: string, data: any) {
     return axiosInstance.put(url, data);
 }
 
-export function create(url: string, data: any) {
-    return axiosInstance.post(url, data);
+export function remove(url: string) {
+    return axiosInstance.delete(url);
 }

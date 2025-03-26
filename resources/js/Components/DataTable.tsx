@@ -30,7 +30,6 @@ import {
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import {
     DropdownMenu,
@@ -40,6 +39,8 @@ import {
 } from "./ui/dropdown-menu";
 import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from "lucide-react";
 import { remove } from "@/lib/api";
+import { toast } from "sonner";
+import { ServerErrorResponse } from "@/types";
 
 interface DataTableProps<TData, TValue> {
     url: string;
@@ -50,6 +51,7 @@ interface DataTableProps<TData, TValue> {
     showToggleColumn?: boolean;
     showSearch?: boolean;
     controls?: React.ReactNode;
+    onEdit?: (data: TData) => void;
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
@@ -61,6 +63,7 @@ export function DataTable<TData extends { id: number }, TValue>({
     showToggleColumn,
     showSearch,
     controls,
+    onEdit,
 }: DataTableProps<TData, TValue>) {
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
@@ -116,14 +119,21 @@ export function DataTable<TData extends { id: number }, TValue>({
         setDeleteDialogVisible(true);
     }
 
-    function confirmDelete() {
+    async function confirmDelete() {
         if (selectedId !== null) {
-            remove(`${url}/${selectedId}`)
-                .then(() => {
-                    setDeleteDialogVisible(false);
-                    dataQuery.refetch();
-                })
-                .catch(() => alert("Failed to delete user"));
+            try {
+                await remove(`${url}/${selectedId}`)
+                setDeleteDialogVisible(false);
+                dataQuery.refetch();
+                toast.success("User deleted successfully", {
+                    richColors: true,
+                });
+            } catch (error) {
+                const axiosError = error as ServerErrorResponse;
+                toast.error(axiosError.response?.data.message, {
+                    richColors: true,
+                });
+            }
         }
     }
 
@@ -224,22 +234,10 @@ export function DataTable<TData extends { id: number }, TValue>({
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        alert(
-                                                            `Edit user: ${row.original.id}`
-                                                        )
-                                                    }
-                                                >
+                                                <DropdownMenuItem onClick={() => onEdit?.(row.original)}>
                                                     <Edit /> Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        handleDelete(
-                                                            row.original.id
-                                                        )
-                                                    }
-                                                >
+                                                <DropdownMenuItem onClick={() => handleDelete(row.original.id)}>
                                                     <Trash2 /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>

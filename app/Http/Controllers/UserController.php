@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -33,7 +35,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        return User::create($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'password' => 'required|string|min:8'
+        ]);
+
+        return User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
     }
 
     /**
@@ -49,7 +61,18 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class . ',email,' . $user->id,
+            'password' => 'nullable|string|min:8'
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+        ]);
+
         return $user;
     }
 
@@ -58,6 +81,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->is(Auth::user())) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $user->delete();
         return response()->json(null, 204);
     }
