@@ -8,6 +8,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
+import React from "react";
 
 export const formSchema = z.object({
     id: z.number().optional(),
@@ -26,7 +27,7 @@ interface CustomerFormFieldProps {
     form: UseFormReturn<z.infer<typeof formSchema>, any, undefined>;
 }
 
-export function CustomerFormField({ form }: CustomerFormFieldProps) {
+function CustomerFormField({ form }: CustomerFormFieldProps) {
     return (
         <>
             <FormField
@@ -73,3 +74,5 @@ export function CustomerFormField({ form }: CustomerFormFieldProps) {
         </>
     );
 }
+
+export default React.memo(CustomerFormField)

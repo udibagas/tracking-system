@@ -1,10 +1,9 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { columns } from "./Columns";
-import { CustomerFormField } from "./CustomerForm";
 import { CrudTable } from "@/components/CrudTable";
 import { useForm } from "react-hook-form";
-import { defaultValues, formSchema } from "./CustomerForm"
+import CustomerFormField, { defaultValues, formSchema } from "./CustomerForm"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
