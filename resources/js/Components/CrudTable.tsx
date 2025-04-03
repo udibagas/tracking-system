@@ -205,7 +205,7 @@ export function CrudTable<TData extends { id: number }>({
                 </TableBody>
             </Table>
 
-            <DataTablePagination table={table} data={dataQuery.data} />
+            {(dataQuery.data?.last_page ?? 1) > 1 && <DataTablePagination table={table} data={dataQuery.data} />}
 
             <DeleteConfirmation
                 visible={deleteDialogVisible}
