@@ -10,7 +10,6 @@ import {
     type FieldPath,
     type FieldValues,
 } from "react-hook-form"
-
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { Input } from "./input";
@@ -166,16 +165,15 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
-
-
 interface FormFieldItemProps {
     control: Control<any, any>;
     name: string;
     label: string;
     placeholder?: string;
+    inputType?: string;
 }
 
-export function FormFieldItem({ control, name, label, placeholder }: FormFieldItemProps) {
+export function FormFieldInput({ control, name, label, placeholder, inputType = 'text' }: FormFieldItemProps) {
     return <FormField
         control={control}
         name={name}
@@ -183,11 +181,14 @@ export function FormFieldItem({ control, name, label, placeholder }: FormFieldIt
             <FormItem>
                 <FormLabel>{label}</FormLabel>
                 <FormControl>
-                    <Input
-                        hasError={fieldState.invalid}
-                        placeholder={placeholder}
-                        {...field}
-                    />
+                    {(['text', 'number', 'email', 'password'].includes(inputType)) &&
+                        <Input
+                            type={inputType}
+                            hasError={fieldState.invalid}
+                            placeholder={placeholder}
+                            {...field}
+                        />
+                    }
                 </FormControl>
                 <FormMessage />
             </FormItem>
