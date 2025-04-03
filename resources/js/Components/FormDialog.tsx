@@ -20,7 +20,6 @@ import { FormType } from "./CrudTable";
 interface FormDialogProps {
     url: string;
     visible: boolean;
-    title: string;
     form: FormType
     children: ReactNode;
     closeForm: () => void;
@@ -29,12 +28,12 @@ interface FormDialogProps {
 function FormDialog({
     url,
     visible,
-    title,
     form,
     children,
     closeForm,
 }: FormDialogProps) {
     const queryClient = useQueryClient();
+    const id = form.form.getValues("id");
 
     const onSubmit = useCallback(async (values: z.infer<typeof form.schema>) => {
         try {
@@ -74,7 +73,7 @@ function FormDialog({
         <Dialog open={visible} onOpenChange={closeForm}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle>{id ? "Update Data" : "Create Data"}</DialogTitle>
                     <DialogDescription>
                         Make sure you fill all the required fields
                     </DialogDescription>
@@ -91,7 +90,7 @@ function FormDialog({
                                 <CircleX /> Cancel
                             </Button>
                             <Button type="submit">
-                                <Save /> Save
+                                <Save /> {id ? "Update" : "Create"}
                             </Button>
                         </DialogFooter>
                     </form>
