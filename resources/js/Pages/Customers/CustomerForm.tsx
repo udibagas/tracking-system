@@ -22,7 +22,11 @@ export const defaultValues = {
     phone: "",
 };
 
-export function CustomerFormField({ form }: { form: UseFormReturn<any, any, undefined> }) {
+interface CustomerFormFieldProps {
+    form: UseFormReturn<z.infer<typeof formSchema>, any, undefined>;
+}
+
+export function CustomerFormField({ form }: CustomerFormFieldProps) {
     return (
         <>
             <FormField
