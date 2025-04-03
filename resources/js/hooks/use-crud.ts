@@ -1,5 +1,5 @@
 import { remove } from "@/lib/api";
-import fetchData from "@/lib/fetchData";
+import fetchData from "@/lib/api";
 import { ServerErrorResponse } from "@/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
