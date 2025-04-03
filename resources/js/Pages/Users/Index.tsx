@@ -1,11 +1,11 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { DataTable } from "@/components/DataTable";
 import { columns } from "./Columns";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { UserFormDialog } from "./UserForm";
-import { Plus } from "lucide-react";
+import UserFormField, { defaultValues, formSchema } from "./UserForm";
+import { CrudTable } from "@/components/CrudTable";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export type UserType = {
     id: number;
@@ -15,48 +15,28 @@ export type UserType = {
 }
 
 export default function Users() {
-    const [showDialog, setShowDialog] = useState(false);
-    const [selectedData, setSelectedData] = useState<UserType | undefined>(undefined);
-
-    function onEdit(data: UserType) {
-        setShowDialog(true);
-        setSelectedData(data);
-    }
-
-    function closeDialog() {
-        setShowDialog(false);
-        setSelectedData(undefined);
-    }
-
-    function openDialog(data?: UserType) {
-        setSelectedData(data);
-        setShowDialog(true);
-    }
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: defaultValues,
+    });
 
     return (
         <AuthenticatedLayout>
             <Head title="Manage Users" />
 
-            <DataTable
-                onEdit={onEdit}
+            <CrudTable<UserType>
                 title="Manage Users"
                 columns={columns}
                 url="/users"
                 showIndexColumn
                 showActionColumn
                 showSearch
-                controls={
-                    <Button className="h-8" size='sm' onClick={() => openDialog()}>
-                        <Plus /> Create New User
-                    </Button>
-                }
-            />
-
-            <UserFormDialog
-                data={selectedData}
-                title={selectedData ? 'Edit User' : 'Create User'}
-                visible={showDialog}
-                closeDialog={closeDialog}
+                form={{
+                    form,
+                    schema: formSchema,
+                    defaultValues: defaultValues,
+                    fields: <UserFormField form={form} />
+                }}
             />
         </AuthenticatedLayout>
     );
