@@ -6,7 +6,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { ColumnDef, flexRender } from "@tanstack/react-table";
+import { ColumnDef, flexRender, Row } from "@tanstack/react-table";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import { Button } from "@/components/ui/button";
 import { DataTablePagination } from "./DataTablePagination";
@@ -66,6 +66,11 @@ export function CrudTable<TData extends { id: number }>({
         setDeleteDialogVisible,
         confirmDelete,
     } = useCrud<TData>(url, columns);
+
+    function editRow(row: Row<TData>) {
+        form.form.reset(row.original)
+        setShowForm(true)
+    }
 
     return (
         <>
@@ -140,9 +145,8 @@ export function CrudTable<TData extends { id: number }>({
                         table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                data-state={
-                                    row.getIsSelected() && "selected"
-                                }
+                                data-state={row.getIsSelected() && "selected"}
+                                onDoubleClick={() => editRow(row)}
                             >
                                 {showIndexColumn && (
                                     <TableCell>
@@ -176,13 +180,7 @@ export function CrudTable<TData extends { id: number }>({
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem
-                                                    onClick={() => {
-                                                        form.form.reset(row.original)
-                                                        setShowForm(true)
-                                                    }
-                                                    }
-                                                >
+                                                <DropdownMenuItem onClick={() => editRow(row)}>
                                                     <Edit /> Edit
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => handleDelete(row.original.id)} >
@@ -218,7 +216,6 @@ export function CrudTable<TData extends { id: number }>({
             <FormDialog
                 url={url}
                 visible={showForm}
-                title={title}
                 form={form}
                 closeForm={() => {
                     form.form.reset(form.defaultValues)
