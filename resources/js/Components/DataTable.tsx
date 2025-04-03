@@ -31,7 +31,7 @@ import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from "lucide-react";
 import { remove } from "@/lib/api";
 import { toast } from "sonner";
 import { ServerErrorResponse } from "@/types";
-import { DeleteConfirmation } from "./DeleteConfirmation";
+import DeleteConfirmation from "./DeleteConfirmation";
 
 interface DataTableProps<TData, TValue> {
     url: string;
