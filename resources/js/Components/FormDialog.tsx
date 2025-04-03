@@ -10,7 +10,7 @@ import {
 import { CircleX, Save } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { z } from "zod";
-import { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { create, update } from "@/lib/api";
 import { ServerErrorResponse } from "@/types";
 import { toast } from "sonner";
@@ -26,17 +26,17 @@ interface FormDialogProps {
     closeForm: () => void;
 }
 
-export function FormDialog({
+function FormDialog({
     url,
     visible,
     title,
-    closeForm,
+    form,
     children,
-    form
+    closeForm,
 }: FormDialogProps) {
     const queryClient = useQueryClient();
 
-    async function onSubmit(values: z.infer<typeof form.schema>) {
+    const onSubmit = useCallback(async (values: z.infer<typeof form.schema>) => {
         try {
             values.id
                 ? await update(`${url}/${values.id}`, values)
@@ -68,7 +68,7 @@ export function FormDialog({
                 richColors: true,
             });
         }
-    }
+    }, [url, form.form, queryClient, closeForm]);
 
     return (
         <Dialog open={visible} onOpenChange={closeForm}>
@@ -100,3 +100,5 @@ export function FormDialog({
         </Dialog>
     );
 }
+
+export default React.memo(FormDialog);

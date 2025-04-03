@@ -17,10 +17,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Edit, MoreHorizontal, Plus, RefreshCcw, Save, Trash2 } from "lucide-react";
+import { Edit, MoreHorizontal, Plus, RefreshCcw, Trash2 } from "lucide-react";
 import { useCrud } from "@/hooks/use-crud";
-import { DeleteConfirmation } from "./DeleteConfirmation";
-import { FormDialog } from "./FormDialog";
+import DeleteConfirmation from "./DeleteConfirmation";
+import FormDialog from "./FormDialog";
 import { ReactNode, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -75,10 +75,7 @@ export function CrudTable<TData extends { id: number }>({
                     <Button
                         className="h-8"
                         size="sm"
-                        onClick={() => {
-                            form.form.reset({})
-                            setShowForm(true)
-                        }}
+                        onClick={() => setShowForm(true)}
                     >
                         <Plus /> Create New Data
                     </Button>
@@ -122,10 +119,7 @@ export function CrudTable<TData extends { id: number }>({
                                 );
                             })}
                             {showActionColumn && (
-                                <TableHead
-                                    style={{ width: 40 }}
-                                    className="text-center"
-                                >
+                                <TableHead style={{ width: 40 }} className="text-center">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -227,7 +221,7 @@ export function CrudTable<TData extends { id: number }>({
                 title={title}
                 form={form}
                 closeForm={() => {
-                    form.form.reset({})
+                    form.form.reset(form.defaultValues)
                     setShowForm(false);
                 }}>
                 {form.fields}

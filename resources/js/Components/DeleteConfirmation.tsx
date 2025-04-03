@@ -1,3 +1,4 @@
+import React from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "./ui/alert-dialog";
 
 
@@ -7,7 +8,7 @@ interface DeleteConfirmationProps {
     onCancel: () => void;
 }
 
-export function DeleteConfirmation({
+function DeleteConfirmation({
     visible,
     onConfirm,
     onCancel,
@@ -36,3 +37,5 @@ export function DeleteConfirmation({
         </AlertDialog>
     );
 }
+
+export default React.memo(DeleteConfirmation);

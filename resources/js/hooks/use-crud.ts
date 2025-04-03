@@ -9,19 +9,18 @@ import {
     SortingState,
     useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export const useCrud = <TData>(url: string, columns: ColumnDef<TData>[]) => {
-    const [pagination, setPagination] = useState<PaginationState>({
-        pageIndex: 0,
-        pageSize: 10,
-    });
-
     const [sorting, setSorting] = useState<SortingState>([]);
     const [search, setSearch] = useState<string | null>(null);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
     const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 10,
+    });
 
     const params = useMemo(() => {
         return {
@@ -53,27 +52,30 @@ export const useCrud = <TData>(url: string, columns: ColumnDef<TData>[]) => {
         manualPagination: true,
     });
 
-    function refreshData() {
+    const refreshData = useCallback(() => {
         setSearch("");
         document.querySelector<HTMLInputElement>("#search")!.value = "";
         table.setPageIndex(0);
-    }
+    }, [table]);
 
-    function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-        const timeout = setTimeout(() => {
-            table.setPageIndex(0);
-            setSearch(e.target.value);
-        }, 500);
+    const handleSearch = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value;
+            const timeout = setTimeout(() => {
+                table.setPageIndex(0);
+                setSearch(value);
+            }, 500);
+            return () => clearTimeout(timeout);
+        },
+        [table]
+    );
 
-        return () => clearTimeout(timeout);
-    }
-
-    function handleDelete(id: number) {
+    const handleDelete = useCallback((id: number) => {
         setSelectedId(id);
         setDeleteDialogVisible(true);
-    }
+    }, []);
 
-    async function confirmDelete() {
+    const confirmDelete = useCallback(async () => {
         if (selectedId !== null) {
             try {
                 await remove(`${url}/${selectedId}`);
@@ -89,7 +91,7 @@ export const useCrud = <TData>(url: string, columns: ColumnDef<TData>[]) => {
                 });
             }
         }
-    }
+    }, [selectedId, url, dataQuery]);
 
     return {
         table,
