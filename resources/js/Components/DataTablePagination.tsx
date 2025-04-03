@@ -27,9 +27,6 @@ export function DataTablePagination<TData>({
                 </span>
             </div>
             <div className="flex items-center space-x-2">
-                <div className="text-sm text-muted-foreground">
-                    Page {data?.current_page} of {data?.last_page}
-                </div>
                 <Select
                     value={`${table.getState().pagination.pageSize}`}
                     onValueChange={(value) => {
@@ -49,6 +46,9 @@ export function DataTablePagination<TData>({
                         ))}
                     </SelectContent>
                 </Select>
+                <div className="text-sm text-muted-foreground">
+                    Page {data?.current_page} of {data?.last_page}
+                </div>
                 <Button
                     variant="secondary"
                     size="xs"

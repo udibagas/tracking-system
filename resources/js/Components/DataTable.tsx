@@ -22,16 +22,6 @@ import fetchData from "@/lib/fetchData";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
-    AlertDialog,
-    AlertDialogTitle,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-} from "./ui/alert-dialog";
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -41,6 +31,7 @@ import { Edit, MoreHorizontal, RefreshCcw, Trash2 } from "lucide-react";
 import { remove } from "@/lib/api";
 import { toast } from "sonner";
 import { ServerErrorResponse } from "@/types";
+import { DeleteConfirmation } from "./DeleteConfirmation";
 
 interface DataTableProps<TData, TValue> {
     url: string;
@@ -204,7 +195,7 @@ export function DataTable<TData extends { id: number }, TValue>({
                             </TableRow>
                         ))}
                     </TableHeader>
-                    <TableBody className="overflow-auto">
+                    <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
@@ -275,41 +266,5 @@ export function DataTable<TData extends { id: number }, TValue>({
                 onCancel={() => setDeleteDialogVisible(false)}
             />
         </>
-    );
-}
-
-interface DeleteConfirmationProps {
-    visible: boolean;
-    onConfirm: () => void;
-    onCancel: () => void;
-}
-
-export function DeleteConfirmation({
-    visible,
-    onConfirm,
-    onCancel,
-}: DeleteConfirmationProps) {
-    return (
-        <AlertDialog open={visible} onOpenChange={onCancel}>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the data.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={onCancel}>
-                        Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction onClick={onConfirm}>
-                        Continue
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
     );
 }

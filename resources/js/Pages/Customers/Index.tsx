@@ -1,60 +1,44 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { DataTable } from "@/components/DataTable";
 import { columns } from "./Columns";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { FormDialog } from "@/components/FormDialog";
-import { CustomerForm } from "./CustomerForm";
+import { CustomerFormField } from "./CustomerForm";
+import { CrudTable } from "@/components/CrudTable";
+import { useForm } from "react-hook-form";
+import { defaultValues, formSchema } from "./CustomerForm"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 export type CustomerType = {
     id: number;
     name: string;
     email: string;
     phone: string;
-}
+};
 
-export default function Users() {
-    const [showDialog, setShowDialog] = useState(false);
-    const [selectedData, setSelectedData] = useState<CustomerType | undefined>(undefined);
-
-    function onEdit(data: CustomerType) {
-        setShowDialog(true);
-        setSelectedData(data);
-    }
-
-    function closeDialog() {
-        setShowDialog(false);
-        setSelectedData(undefined);
-    }
-
-    function openDialog(data?: CustomerType) {
-        setSelectedData(data);
-        setShowDialog(true);
-    }
+export default function Customers() {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: defaultValues,
+    });
 
     return (
         <AuthenticatedLayout>
             <Head title="Manage Users" />
 
-            <DataTable
-                onEdit={onEdit}
+            <CrudTable<CustomerType>
                 title="Manage Customers"
                 columns={columns}
                 url="/customers"
                 showIndexColumn
                 showActionColumn
                 showSearch
-                controls={
-                    <Button className="h-8" size='sm' onClick={() => openDialog()}>
-                        <Plus /> Create New Customer
-                    </Button>
-                }
+                form={{
+                    form,
+                    schema: formSchema,
+                    defaultValues: defaultValues,
+                    fields: <CustomerFormField form={form} />
+                }}
             />
-
-            <CustomerForm visible={showDialog} title="Create Customer" data={selectedData} closeDialog={closeDialog} />
-
         </AuthenticatedLayout>
     );
 }

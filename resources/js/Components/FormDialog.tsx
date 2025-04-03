@@ -8,44 +8,35 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { CircleX, Save } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import { z } from "zod";
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { create, update } from "@/lib/api";
 import { ServerErrorResponse } from "@/types";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { FormType } from "./CrudTable";
 
-interface FormDialogProps<T> {
+interface FormDialogProps {
     url: string;
     visible: boolean;
     title: string;
-    data: T | object;
-    closeDialog: () => void;
-    formSchema: z.ZodObject<any, any>;
-    defaultValues: object;
-    form: UseFormReturn<any, any, undefined>;
+    form: FormType
     children: ReactNode;
+    closeForm: () => void;
 }
 
 export function FormDialog({
     url,
     visible,
     title,
-    data,
-    formSchema,
-    closeDialog,
+    closeForm,
     children,
     form
-}: FormDialogProps<any>) {
+}: FormDialogProps) {
     const queryClient = useQueryClient();
 
-    useEffect(() => {
-        form.reset(data);
-    }, [data, form]);
-
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof form.schema>) {
         try {
             values.id
                 ? await update(`${url}/${values.id}`, values)
@@ -55,8 +46,7 @@ export function FormDialog({
                 richColors: true,
             });
 
-            form.reset();
-            closeDialog();
+            closeForm();
 
             // reload table
             queryClient.invalidateQueries({
@@ -67,7 +57,7 @@ export function FormDialog({
             if (axiosError.code === "ERR_BAD_REQUEST") {
                 const errors = axiosError.response.data.errors;
                 for (const key in errors) {
-                    form.setError(key as any, {
+                    form.form.setError(key as any, {
                         type: "server",
                         message: errors[key][0],
                     });
@@ -80,11 +70,6 @@ export function FormDialog({
         }
     }
 
-    function closeForm() {
-        form.reset();
-        closeDialog();
-    }
-
     return (
         <Dialog open={visible} onOpenChange={closeForm}>
             <DialogContent className="sm:max-w-[425px]">
@@ -94,23 +79,23 @@ export function FormDialog({
                         Make sure you fill all the required fields
                     </DialogDescription>
                 </DialogHeader>
-                <Form {...form}>
+                <Form {...form.form}>
                     <form
-                        id="form"
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={form.form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
                         {children}
+
+                        <DialogFooter>
+                            <Button variant="outline" onClick={closeForm}>
+                                <CircleX /> Cancel
+                            </Button>
+                            <Button type="submit">
+                                <Save /> Save
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeForm}>
-                        <CircleX /> Cancel
-                    </Button>
-                    <Button type="submit" form="form">
-                        <Save /> Save
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

@@ -10,15 +10,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { CircleX, Save } from "lucide-react";
 import { UserType } from "./Index";
-import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react";
-import { create, update } from "@/lib/api";
-import { ServerErrorResponse } from "@/types";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useFormDialog } from "@/hooks/use-form-dialog";
 
 interface UserFormDialogProps {
     visible: boolean;
@@ -39,67 +34,18 @@ const formSchema = z.object({
         }),
 })
 
-export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDialogProps) {
-    const queryClient = useQueryClient();
+const defaultValues = {
+    name: '',
+    email: '',
+    password: '',
+}
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            password: "",
-        },
-    })
+export function UserFormDialog({ visible, title, data, closeDialog }: UserFormDialogProps) {
+    const { form, onSubmit, closeForm } = useFormDialog('/users', formSchema, defaultValues, closeDialog);
 
     useEffect(() => {
-        form.reset({
-            id: data?.id,
-            name: data?.name || "",
-            email: data?.email || "",
-            password: "",
-        });
+        form.reset(data);
     }, [data, form]);
-
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-            values.id
-                ? await update(`/users/${values.id}`, values)
-                : await create('/users', values);
-
-            toast.success('User saved successfully', {
-                richColors: true,
-            });
-
-            form.reset();
-            closeDialog();
-
-            // reload table
-            queryClient.invalidateQueries({
-                queryKey: ['/users'],
-            });
-
-        } catch (error) {
-            const axiosError = error as ServerErrorResponse
-            if (axiosError.code === 'ERR_BAD_REQUEST') {
-                const errors = axiosError.response.data.errors;
-                for (const key in errors) {
-                    form.setError(key as any, {
-                        type: 'server',
-                        message: errors[key][0],
-                    });
-                }
-            }
-
-            toast.error(axiosError.response.data.message, {
-                richColors: true,
-            });
-        }
-    }
-
-    function closeForm() {
-        form.reset();
-        closeDialog();
-    }
 
     return (
         <Dialog open={visible} onOpenChange={closeForm}>
