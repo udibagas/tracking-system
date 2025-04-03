@@ -150,9 +150,7 @@ export function CrudTable<TData extends { id: number }>({
                             >
                                 {showIndexColumn && (
                                     <TableCell>
-                                        {(dataQuery.data?.from ?? 1) +
-                                            row.index}
-                                        .
+                                        {(dataQuery.data?.from ?? 1) + row.index} .
                                     </TableCell>
                                 )}
                                 {row.getVisibleCells().map((cell) => (
