@@ -1,5 +1,4 @@
-import { Input } from "@/components/ui/input"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormFieldInput } from "@/components/ui/form";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
 import React from "react";
@@ -29,47 +28,9 @@ export const defaultValues = {
 function UserFormField({ form }: UserFormFieldProps) {
     return (
         <>
-            <FormField
-                control={form.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                    <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                            <Input hasError={fieldState.invalid} placeholder="Your Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-
-            <FormField
-                control={form.control}
-                name="email"
-                render={({ field, fieldState }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                            <Input hasError={fieldState.invalid} placeholder="user@mail.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-
-            <FormField
-                control={form.control}
-                name="password"
-                render={({ field, fieldState }) => (
-                    <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <Input hasError={fieldState.invalid} type="password" placeholder="Enter your password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
+            <FormFieldInput control={form.control} name="name" label="Name" placeholder="Your name" />
+            <FormFieldInput control={form.control} name="email" label="Email" placeholder="user@mail.com" />
+            <FormFieldInput control={form.control} name="password" label="Password" placeholder="Enter your password" inputType="password" />
         </>
     )
 }
