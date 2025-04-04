@@ -27,7 +27,7 @@ export default function AuthenticatedLayout({
                                 <BreadcrumbList>
                                     {pages.map((page, index) => (
                                         <BreadcrumbItem key={index}>
-                                            <BreadcrumbPage>{page}</BreadcrumbPage>
+                                            <BreadcrumbPage>{page.toUpperCase()}</BreadcrumbPage>
                                         </BreadcrumbItem>
                                     ))}
                                 </BreadcrumbList>
