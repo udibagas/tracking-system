@@ -4,7 +4,6 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
-import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient()
 
@@ -15,7 +14,7 @@ export default function AuthenticatedLayout({
     const pages = pathname.split('/')
 
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
@@ -35,15 +34,12 @@ export default function AuthenticatedLayout({
                         </div>
                     </header>
                     <div className="flex flex-1 flex-col gap-4 p-4">
-                        <QueryClientProvider client={queryClient}>
-                            <div className="p-4">
-                                {children}
-                            </div>
-                        </QueryClientProvider>
+                        <div className="p-4">
+                            {children}
+                        </div>
                     </div>
                 </SidebarInset>
             </SidebarProvider>
-            <Toaster />
-        </>
+        </QueryClientProvider>
     );
 }

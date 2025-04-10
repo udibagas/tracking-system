@@ -4,7 +4,7 @@ import CancelButton from "@/components/buttons/CancelButton";
 import SaveButton from "@/components/buttons/SaveButton";
 import { CustomFormProps, UserType } from "@/types";
 
-const UserForm: React.FC<CustomFormProps<UserType>> = ({ visible, isEditing, onCancel, onOk, errors, form }) => {
+const CustomerForm: React.FC<CustomFormProps<UserType>> = ({ visible, isEditing, onCancel, onOk, errors, form }) => {
     return (
         <Modal
             width={450}
@@ -45,28 +45,16 @@ const UserForm: React.FC<CustomFormProps<UserType>> = ({ visible, isEditing, onC
                 </Form.Item>
 
                 <Form.Item
-                    label="Role"
-                    name="role"
-                    validateStatus={errors.role ? "error" : ""}
-                    help={errors.role?.join(", ")}
+                    label="Phone"
+                    name="phone"
+                    validateStatus={errors.phone ? "error" : ""}
+                    help={errors.phone?.join(", ")}
                 >
-                    <Select>
-                        <Select.Option value="admin">Admin</Select.Option>
-                        <Select.Option value="user">User</Select.Option>
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    validateStatus={errors.password ? "error" : ""}
-                    help={errors.password?.join(", ")}
-                >
-                    <Input.Password />
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal >
     );
 };
 
-export default UserForm;
+export default CustomerForm;

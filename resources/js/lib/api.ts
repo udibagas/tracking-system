@@ -1,3 +1,4 @@
+import { FileType } from "@/types";
 import axios from "axios";
 
 interface PaginationLink {
@@ -31,22 +32,6 @@ export const axiosInstance = axios.create({
     },
 });
 
-export function create(url: string, data: any) {
-    return axiosInstance.post(url, data);
-}
-
-export function get(url: string) {
-    return axiosInstance.get(url);
-}
-
-export function update(url: string, data: any) {
-    return axiosInstance.put(url, data);
-}
-
-export function remove(url: string) {
-    return axiosInstance.delete(url);
-}
-
 export default async function fetchData<TData>(
     url: string,
     params: Record<string, any> = {}
@@ -56,5 +41,43 @@ export default async function fetchData<TData>(
         { params }
     );
 
+    return data;
+}
+
+export async function getItems<T>(
+    endpoint: string,
+    params: Record<string, string | number | boolean> = {}
+): Promise<T> {
+    const { data } = await axiosInstance.get<T>(endpoint, { params });
+    return data;
+}
+
+export async function getItem<T>(endpoint: string, id: number): Promise<T> {
+    const { data } = await axiosInstance.get<T>(`${endpoint}/${id}`);
+    return data;
+}
+
+export async function createItem<T>(endpoint: string, item: T): Promise<T> {
+    const { data } = await axiosInstance.post(endpoint, item);
+    return data;
+}
+
+export async function updateItem<T>(
+    endpoint: string,
+    id: number,
+    item: T
+): Promise<T> {
+    const { data } = await axiosInstance.put(`${endpoint}/${id}`, item);
+    return data;
+}
+
+export function deleteItem(endpoint: string, id: number): Promise<void> {
+    return axiosInstance.delete(`${endpoint}/${id}`);
+}
+
+export async function uploadFile(file: File): Promise<FileType> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const { data } = await axiosInstance.post("/upload", formData);
     return data;
 }

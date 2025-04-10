@@ -38,6 +38,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'role' => 'required|in:admin,user',
             'password' => 'required|string|min:8'
         ]);
 

@@ -1,43 +1,21 @@
+import React from "react";
+import { UserType } from "@/types";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { columns } from "./Columns";
-import UserFormField, { defaultValues, formSchema } from "./UserForm";
-import { CrudTable } from "@/components/CrudTable";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { DataTableProvider } from "@/context/DataTableContext";
+import UserTable from "./UserTable";
 
-export type UserType = {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-}
-
-export default function Users() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: defaultValues,
-    });
+const User: React.FC = () => {
+    const url = "/users";
 
     return (
         <AuthenticatedLayout>
             <Head title="Manage Users" />
-
-            <CrudTable<UserType>
-                title="Manage Users"
-                columns={columns}
-                url="/users"
-                showIndexColumn
-                showActionColumn
-                showSearch
-                form={{
-                    form,
-                    schema: formSchema,
-                    defaultValues: defaultValues,
-                    fields: <UserFormField form={form} />
-                }}
-            />
+            <DataTableProvider<UserType> url={url}>
+                <UserTable />
+            </DataTableProvider>
         </AuthenticatedLayout>
     );
-}
+};
+
+export default User;

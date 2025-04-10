@@ -8,7 +8,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { DataTableServerResponse } from "@/lib/fetchData";
+import { DataTableServerResponse } from "@/lib/api";
 
 interface DataTablePaginationProps<TData> {
     table: Table<TData>;
