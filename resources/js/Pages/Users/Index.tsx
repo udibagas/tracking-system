@@ -1,21 +1,16 @@
-import React from "react";
 import { UserType } from "@/types";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { Head } from "@inertiajs/react";
 import { DataTableProvider } from "@/context/DataTableContext";
 import UserTable from "./UserTable";
 
-const User: React.FC = () => {
-    const url = "/users";
-
+export default function User() {
     return (
-        <AuthenticatedLayout>
+        <MainLayout>
             <Head title="Manage Users" />
-            <DataTableProvider<UserType> url={url}>
+            <DataTableProvider<UserType> url='/users'>
                 <UserTable />
             </DataTableProvider>
-        </AuthenticatedLayout>
+        </MainLayout>
     );
 };
-
-export default User;

@@ -1,142 +1,99 @@
-'use client';
+import { useEffect, useState } from 'react';
+import { Layout, Menu, MenuProps } from 'antd';
+import { QueryClient } from '@tanstack/react-query';
+import { ArrowLeftRight, ChartAreaIcon, DollarSign, File, LayoutDashboardIcon, Link2Icon, Settings, Truck, User } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
-import {
-    ArrowLeftRight,
-    ChartAreaIcon,
-    DollarSign,
-    File,
-    LayoutDashboardIcon,
-    Link2Icon,
-    Settings,
-    Truck,
-    User,
-} from "lucide-react";
+const { Header, Sider, Content } = Layout;
+const queryClient = new QueryClient();
+type MenuItem = Required<MenuProps>['items'][number];
 
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from "./ui/sidebar";
-import { NavUser } from "@/components/NavUser";
-import { Link, usePage } from "@inertiajs/react";
-
-const items = [
+const menuItems: MenuItem[] = [
     {
-        group: "",
-        menus: [
+        type: 'group',
+        key: "main-menu",
+        label: "Main Menu",
+        children: [
             {
-                title: "Dashboard",
-                url: "/",
-                icon: LayoutDashboardIcon,
+                label: <Link href="/">Dashboard</Link>,
+                key: "/",
+                icon: <LayoutDashboardIcon />,
             },
         ],
     },
     {
-        group: "Transaction",
-        menus: [
+        type: 'group',
+        key: "transaction",
+        label: "Transaction",
+        children: [
             {
-                title: "Delivery",
-                url: "/delivery",
-                icon: ArrowLeftRight,
+                label: <Link href="/delivery">Delivery</Link>,
+                key: "/delivery",
+                icon: <ArrowLeftRight />,
             },
             {
-                title: "Invoice",
-                url: "/invoice",
-                icon: File,
+                label: <Link href="/invoice">Invoice</Link>,
+                key: "/invoice",
+                icon: <File />,
             },
             {
-                title: "Report",
-                url: "/report",
-                icon: ChartAreaIcon,
+                label: <Link href="/report">Report</Link>,
+                key: "/report",
+                icon: <ChartAreaIcon />,
             },
         ],
     },
     {
-        group: "Master Data",
-        menus: [
+        type: 'group',
+        key: "master-data",
+        label: "Master Data",
+        children: [
             {
-                title: "Company",
-                url: "/company",
-                icon: Settings,
+                label: <Link href="/company">Company</Link>,
+                key: "/company",
+                icon: <Settings />,
             },
             {
-                title: "Rates",
-                url: "/rates",
-                icon: DollarSign,
+                label: <Link href="/rates">Rates</Link>,
+                key: "/rates",
+                icon: <DollarSign />,
             },
             {
-                title: "Customers",
-                url: "/customers",
-                icon: Link2Icon,
+                label: <Link href="/customers">Customers</Link>,
+                key: "/customers",
+                icon: <Link2Icon />,
             },
             {
-                title: "Agents",
-                url: "/agents",
-                icon: Truck,
+                label: <Link href="/agents">Agents</Link>,
+                key: "/agents",
+                icon: <Truck />,
             },
             {
-                title: "Users",
-                url: "/users",
-                icon: User,
+                label: <Link href="/users">Users</Link>,
+                key: "/users",
+                icon: <User />,
             },
         ],
     },
 ];
 
-export function AppSidebar() {
+export default function AppSideBar({ collapsed }: { collapsed: boolean }) {
     const pathname = window.location.pathname
-    const { user } = usePage().props.auth;
+    const [selectedKey, setSelectedKeys] = useState(pathname);
+
+    useEffect(() => {
+        setSelectedKeys(window.location.pathname);
+    }, [pathname]);
 
     return (
-        <Sidebar>
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                    <ArrowLeftRight className="size-4" />
-                                </div>
-                                <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="font-semibold">Tracking System</span>
-                                    <span className="">v1.0.0</span>
-                                </div>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-            <SidebarContent>
-                {items.map((item) => (
-                    <SidebarGroup key={item.group}>
-                        {item.group && <SidebarGroupLabel>{item.group}</SidebarGroupLabel>}
-                        <SidebarGroupContent>
-                            <SidebarMenu>
-                                {item.menus.map((menu) => (
-                                    <SidebarMenuItem key={menu.title}>
-                                        <SidebarMenuButton asChild isActive={pathname === menu.url}>
-                                            <Link href={menu.url}>
-                                                <menu.icon />
-                                                <span>{menu.title}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
-                            </SidebarMenu>
-                        </SidebarGroupContent>
-                    </SidebarGroup>
-                ))}
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser user={user} />
-            </SidebarFooter>
-        </Sidebar>
+        <Sider trigger={null} collapsible collapsed={collapsed}>
+            <div className="demo-logo-vertical" />
+            <Menu
+                theme="dark"
+                mode="inline"
+                defaultSelectedKeys={[selectedKey]}
+                items={menuItems}
+            />
+        </Sider>
     );
-}
+};

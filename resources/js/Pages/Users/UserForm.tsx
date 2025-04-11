@@ -1,10 +1,9 @@
-import React from "react";
 import { Modal, Form, Input, Select } from "antd";
 import CancelButton from "@/components/buttons/CancelButton";
 import SaveButton from "@/components/buttons/SaveButton";
 import { CustomFormProps, UserType } from "@/types";
 
-const UserForm: React.FC<CustomFormProps<UserType>> = ({ visible, isEditing, onCancel, onOk, errors, form }) => {
+export default function UserForm({ visible, isEditing, onCancel, onOk, errors, form }: CustomFormProps<UserType>) {
     return (
         <Modal
             width={450}
@@ -68,5 +67,3 @@ const UserForm: React.FC<CustomFormProps<UserType>> = ({ visible, isEditing, onC
         </Modal >
     );
 };
-
-export default UserForm;

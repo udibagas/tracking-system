@@ -60,10 +60,11 @@ export default function UserTable() {
                         setSearch(value)
                     }}
                     style={{ width: 200 }}
-                    className="ml-2"
                 />
             </PageHeader>
+
             <DataTable<UserType> columns={columns} />
+
             <UserForm
                 visible={showForm}
                 isEditing={isEditing}

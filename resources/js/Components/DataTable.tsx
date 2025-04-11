@@ -19,7 +19,7 @@ export default function DataTable<T extends { id: number }>({ columns }: DataTab
 
     return (
         <Table
-            scroll={{ y: 'calc(100vh - 290px)' }}
+            scroll={{ y: 'calc(100vh - 300px)' }}
             loading={isPending}
             size="small"
             columns={columns}

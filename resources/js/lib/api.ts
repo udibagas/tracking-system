@@ -24,10 +24,11 @@ export interface DataTableServerResponse<TData> {
 }
 
 export const axiosInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    // baseURL: "http://localhost:8000",
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
         Accept: "application/json",
     },
 });
